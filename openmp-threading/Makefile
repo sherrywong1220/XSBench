@@ -115,7 +115,7 @@ endif
 # Targets to Build
 #===============================================================================
 
-$(program): $(obj) XSbench_header.h Makefile
+$(program): clean $(obj) XSbench_header.h Makefile
 	$(CC) $(CFLAGS) $(obj) -o $@ $(LDFLAGS)
 
 %.o: %.c XSbench_header.h Makefile
