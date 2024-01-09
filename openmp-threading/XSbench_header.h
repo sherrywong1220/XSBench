@@ -8,6 +8,10 @@
 #include<math.h>
 #include<assert.h>
 #include<stdint.h>
+#ifdef CUSTOM_NUMA
+#include <numa.h>
+#endif
+
 
 #ifdef _MSC_VER
 #define strncasecmp _strnicmp

@@ -1,5 +1,6 @@
 #include "XSbench_header.h"
 
+
 SimulationData grid_init_do_not_profile( Inputs in, int mype )
 {
 	// Structure to hold all allocated simuluation data arrays
@@ -33,7 +34,25 @@ SimulationData grid_init_do_not_profile( Inputs in, int mype )
 	
 	// Initialize Nuclide Grid
 	SD.length_nuclide_grid = in.n_isotopes * in.n_gridpoints;
+	#if defined(CUSTOM_NUMA)
+	struct bitmask *bm = numa_bitmask_alloc(numa_max_node() + 1);
+	char* env_nodes = getenv("NPB_NUMA_NODES");
+	assert(env_nodes != NULL);
+	printf("NPB_NUMA_NODES=%s\n", env_nodes);
+	if (env_nodes != NULL) {
+		char* token = strtok(env_nodes, ",");
+		while (token != NULL) {
+        	int node = atoi(token);
+        	numa_bitmask_setbit(bm, node);
+			printf("numa_bitmask_setbit node %d\n", node);
+        	token = strtok(NULL, ",");
+		}
+	}
+	SD.nuclide_grid     = (NuclideGridPoint *) numa_alloc_interleaved_subset( SD.length_nuclide_grid * sizeof(NuclideGridPoint), bm);
+	#else
 	SD.nuclide_grid     = (NuclideGridPoint *) malloc( SD.length_nuclide_grid * sizeof(NuclideGridPoint));
+	#endif
+
 	assert(SD.nuclide_grid != NULL);
 	nbytes += SD.length_nuclide_grid * sizeof(NuclideGridPoint);
 	for( int i = 0; i < SD.length_nuclide_grid; i++ )

@@ -119,5 +119,10 @@ int main( int argc, char* argv[] )
 	aml_finalize();
 	#endif
 
+	#if defined(CUSTOM_NUMA)
+	numa_free(SD.nuclide_grid, SD.length_nuclide_grid * sizeof(NuclideGridPoint));
+	#endif
+
+
 	return is_invalid_result;
 }

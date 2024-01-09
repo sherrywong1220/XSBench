@@ -2,6 +2,8 @@
 # User Options
 #===============================================================================
 
+$(info CUSTOM_NUMA is $(CUSTOM_NUMA))
+
 # Compiler can be set below, or via environment variable
 ifeq ($(CC),)
 CC    = gcc
@@ -17,7 +19,13 @@ AML         = no
 # Program name & source code list
 #===============================================================================
 
+
+
+
 program = XSBench
+ifdef CUSTOM_NUMA
+program = XSBench_numa
+endif
 
 source = \
 Main.c \
@@ -40,9 +48,15 @@ endif
 
 # Standard Flags
 CFLAGS := -std=gnu99 -Wall
+ifdef CUSTOM_NUMA
+CFLAGS += -DCUSTOM_NUMA
+endif
 
 # Linker Flags
 LDFLAGS = -lm
+ifdef CUSTOM_NUMA
+LDFLAGS +=  -lnuma
+endif
 
 # Regular gcc Compiler
 ifneq (,$(findstring gcc,$(CC)))
